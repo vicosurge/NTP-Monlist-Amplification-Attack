@@ -105,10 +105,10 @@ def scapy_packet(ntp_server, target_address, ntp_data_pattern):
 	  
 def thread_function(numberthreads):
 	'''
-	Calling the  function(ntp_attack) inside a thread
-    THIS FUNCTION WILL SPAWN THREADS PER NTP_SERVER
-    SYNTAX REFERENCED FROM http://pymotw.com/2/threading/ 
-    '''
+ 	Calling the  function(ntp_attack) inside a thread
+	THIS FUNCTION WILL SPAWN THREADS PER NTP_SERVER
+    	SYNTAX REFERENCED FROM http://pymotw.com/2/threading/ 
+    	'''
 	
 	threads = []
 	for i in range(int(numberthreads)):
