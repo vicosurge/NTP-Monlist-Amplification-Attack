@@ -10,7 +10,7 @@ this, then please share your ideas. I am always open to learning something
 new.
 
 Ron Nilekani
-Rackspace, San Antonio
+Rackspace, Texas
 nilekani.raunaq@gmail.com
 
 Please feel free to reach out to me incase if you have any suggestions.
