@@ -27,7 +27,7 @@ import time
 
 def Introduction():
 	print
-        print "NTP AMPLIFICATION ATTACKS"
+        print "NTP AMPLIFICATION ATTACKS:"
         print "MAKING MONLIST QUERY TO NTP SERVER USING IP ADDRESSING SPOOFING"
         print "NTP SERVER would flood the target with amplified amount of data in response"
         print "In order to stop the execution of this program, press CTRL-C"
