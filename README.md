@@ -7,7 +7,7 @@ the victim with an amplified response.
 
 In order to stop the execution of this program, press CTRL-C
 
-#Installation
+## Installation
 Note: This script works for Python 3.7.x or above, other versions
 of Python 3 will probably work.
 
@@ -15,9 +15,11 @@ Make sure to install scapy library on your local machine. You
 can do this by installing it through pip3 and the requirements.txt
 file located in this folder.
 
-E.g.: pip3 install -r requirements.txt
+```bash
+pip3 install -r requirements.txt
+```
 
-#Usage
+## Usage
 This tool comes with a set of flags for use through the CLI,
 please note that if you do not set flags you will still be
 prompted for the information required.
@@ -33,14 +35,14 @@ is only one it needs to be in a file.
 is an optional flag as this script will figure out the amount of
 threads. Probably this will be removed in the future
 
-#Important
+## Important
 Please take note of the following:
 1) Do not use this script for malicious purposes
 2) This is for educational and instructional use only
 3) Yes, the above point (2) includes Pentesting
 4) Use with caution, this can bring devices down VERY easily
 
-#TODO
+## TODO
 1. Implement method to allow IP addresses to be sent through
 the CLI as an alternative to a file.
 2. Potentially remove -T flag as it is not really needed,
