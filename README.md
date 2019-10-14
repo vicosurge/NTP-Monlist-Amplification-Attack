@@ -31,9 +31,11 @@ properly. May or not help you with your issue, keep this in mind.
 IP that will received the amplified attack
 2. -f, --file - File that contains the NTP Servers, even if it
 is only one it needs to be in a file.
-3. -T, --threads - Threads that will be used for this process, this
-is an optional flag as this script will figure out the amount of
-threads. Probably this will be removed in the future
+
+Example of usage on CLI:
+```bash
+python3 ntp.py -t "<victim_IP>" -f "<ntp_server_file>"
+```
 
 ## Important
 Please take note of the following:
@@ -45,5 +47,3 @@ Please take note of the following:
 ## TODO
 1. Implement method to allow IP addresses to be sent through
 the CLI as an alternative to a file.
-2. Potentially remove -T flag as it is not really needed,
-the script can figure out how many threads are to be run

