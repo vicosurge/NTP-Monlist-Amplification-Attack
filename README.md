@@ -32,9 +32,24 @@ IP that will received the amplified attack
 2. -f, --file - File that contains the NTP Servers, even if it
 is only one it needs to be in a file.
 
-Example of usage on CLI:
+Example of usage on CLI for `ntp.py`:
 ```bash
 python3 ntp.py -t "<victim_IP>" -f "<ntp_server_file>"
+```
+
+Example of usage on CLI for `enhanced-ntp.py`:
+```bash
+# Basic usage
+python3 ntp_enhanced.py -t 192.168.1.100 -f example.txt
+
+# IPv6 target with custom settings
+python3 ntp_enhanced.py -t 2001:db8::1 -f example.txt --threads 20 --packets 5
+
+# Save results to both JSON and CSV
+python3 ntp_enhanced.py -t 10.0.0.1 -f example.txt --json results.json --csv results.csv
+
+# Quiet mode with more aggressive settings
+python3 ntp_enhanced.py -t 192.168.1.1 -f example.txt --threads 50 --packets 10 --quiet --force
 ```
 
 ## Important
